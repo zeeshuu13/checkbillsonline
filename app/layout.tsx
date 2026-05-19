@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { OrganizationJsonLd } from "@/lib/seo/jsonLd";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/lib/seo/jsonLd";
 import { SITE } from "@/lib/site";
 
 const inter = Inter({
@@ -100,6 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen flex flex-col">
         <OrganizationJsonLd />
+        <WebSiteJsonLd />
         <SiteHeader />
         <main id="main" className="flex-1">
           {children}

@@ -4,17 +4,18 @@ import { buildHomeKeywords } from "@/lib/seo/homeKeywords";
 import { CountryPicker } from "@/components/CountryPicker";
 import { RemoteImage } from "@/components/RemoteImage";
 import { FaqAccordion } from "@/components/FaqAccordion";
+import { HomeBillCheckWidget } from "@/components/HomeBillCheckWidget";
 import { COUNTRIES } from "@/lib/data/countries";
 import { PROVIDERS, providersInCountry } from "@/lib/data/providers";
 import { SITE } from "@/lib/site";
-import { WebPageJsonLd } from "@/lib/seo/jsonLd";
+import { WebPageJsonLd, HowToJsonLd, SpeakableJsonLd } from "@/lib/seo/jsonLd";
 import { currentMonthSlug, parseMonthYear, getAllMonthYearSlugs } from "@/lib/seo/months";
 
 export const metadata = buildMetadata({
   path: "/",
-  title: `${SITE.name} - International Electricity, Gas & Water Bill Checker`,
+  title: "Check Bills Online — Electricity, Gas & Water Bill Check in 30 Countries",
   description:
-    "Check electricity, gas, and water bills online across 30 countries. MEPCO, LESCO, IESCO, FESCO and all 11 Pakistan DISCOs. Adani Electricity, Tata Power, BSES in India. DEWA, SEC, Kahramaa in the Gulf. ConEd, PG&E, British Gas, Octopus Energy, and more.",
+    "Check MEPCO, LESCO, IESCO, FESCO, K-Electric, Adani Electricity, DEWA, SEC and 50+ utility bills online. Real-time Pakistan PITC fetch. India BBPS. Gulf deeplinks. Tariff tables, complaint guides, and payment methods for 30 countries.",
   keywords: buildHomeKeywords(),
 });
 
@@ -187,6 +188,8 @@ export default function HomePage() {
   return (
     <>
       <WebPageJsonLd url="/" name={SITE.name} description={SITE.description} />
+      <HowToJsonLd />
+      <SpeakableJsonLd cssSelectors={["#hero-heading", "#hero-intro"]} />
 
       {/* ────────────── 1. Hero ────────────── */}
       <section aria-labelledby="hero-heading" className="relative bg-gradient-to-b from-brand-50 via-white to-white border-b border-slate-200">
@@ -196,7 +199,7 @@ export default function HomePage() {
             <h1 id="hero-heading" className="mt-3 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-slate-900">
               Check your utility bill, in 30 countries, in seconds.
             </h1>
-            <p className="mt-5 text-lg text-slate-700 max-w-xl">
+            <p id="hero-intro" className="mt-5 text-lg text-slate-700 max-w-xl">
               MEPCO. LESCO. The other nine Pakistan DISCOs that bill through PITC. Adani Electricity, Tata Power, and BSES on India&apos;s BBPS rail. DEWA, SEC, Kahramaa, and the rest of the Gulf. ConEd, PG&amp;E, British Gas, Octopus Energy, AGL, Hydro One, and the wider Anglosphere. We fetch the bill live where the operator allows it. Where they don&apos;t, we open the official portal with your reference number filled in. Either way the tariff guide on every page is sourced from the regulator that approved it.
             </p>
             <div className="mt-8 flex gap-3 flex-wrap">
@@ -218,13 +221,7 @@ export default function HomePage() {
             </ul>
           </div>
           <div>
-            <RemoteImage
-              query="electric power lines sunset"
-              alt="High-voltage power lines at sunset, the worldwide visual for the electricity grid that delivers the bills this site decodes."
-              className="aspect-[4/3] w-full rounded-2xl shadow-lg"
-              priority
-              sizes="(min-width: 1024px) 560px, 100vw"
-            />
+            <HomeBillCheckWidget />
           </div>
         </div>
       </section>
@@ -264,6 +261,79 @@ export default function HomePage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ────────────── 2b. Pain points ────────────── */}
+      <section aria-labelledby="pain-heading" className="bg-brand-50 border-b border-brand-100">
+        <div className="container-wide py-16">
+          <div className="max-w-3xl mb-10">
+            <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Common bill problems, solved</p>
+            <h2 id="pain-heading" className="mt-2 text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+              What brought you here today?
+            </h2>
+            <p className="mt-3 text-slate-700">
+              Every bill problem has a structured fix. Pick the one that matches your situation for a direct guide.
+            </p>
+          </div>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                icon: "📈",
+                q: "Bill too high this month?",
+                detail: "Understand which tariff slab you landed in, check for fuel adjustment charges, and spot meter-read errors.",
+                href: "/pakistan/mepco-bill-check/tariff",
+                cta: "See tariff breakdown →",
+              },
+              {
+                icon: "⏰",
+                q: "Missed the due date?",
+                detail: "Know the late payment surcharge, when disconnection notices are issued, and how to pay overdue bills quickly.",
+                href: "/pakistan/mepco-bill-check/payment-methods",
+                cta: "Payment options →",
+              },
+              {
+                icon: "⚠️",
+                q: "Bill shows wrong reading?",
+                detail: "Learn how to raise a meter dispute, what evidence you need, and the statutory response deadlines in your country.",
+                href: "/pakistan/mepco-bill-check/complaints",
+                cta: "Complaint guide →",
+              },
+              {
+                icon: "🏠",
+                q: "Need a new connection?",
+                detail: "Step-by-step new connection application — documents, fees, load category, and expected timelines.",
+                href: "/pakistan/mepco-bill-check/new-connection",
+                cta: "New connection steps →",
+              },
+              {
+                icon: "💡",
+                q: "Want to reduce your bill?",
+                detail: "Pakistan's Cross Subsidy Program gives protected tariff rates to eligible low-usage households — free registration, instant impact.",
+                href: "/pakistan/cross-subsidy-program",
+                cta: "CSS program guide →",
+              },
+              {
+                icon: "📦",
+                q: "Moving house or premises?",
+                detail: "Transfer your account, close your old connection, and avoid bills for a property you've left — the exact process for your utility.",
+                href: "/pakistan/mepco-bill-check/faq",
+                cta: "Moving FAQ →",
+              },
+            ].map((card) => (
+              <li key={card.href}>
+                <Link
+                  href={card.href}
+                  className="flex flex-col h-full rounded-xl border border-brand-200 bg-white p-5 hover:border-brand-400 hover:shadow-sm no-underline group transition-shadow"
+                >
+                  <span className="text-2xl mb-3" aria-hidden>{card.icon}</span>
+                  <h3 className="text-base font-semibold text-slate-900 group-hover:text-brand-800">{card.q}</h3>
+                  <p className="mt-2 text-sm text-slate-600 flex-1">{card.detail}</p>
+                  <span className="mt-4 text-sm font-medium text-brand-700 group-hover:underline">{card.cta}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

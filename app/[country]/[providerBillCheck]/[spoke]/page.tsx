@@ -19,6 +19,7 @@ import { WebPageJsonLd, ArticleJsonLd } from "@/lib/seo/jsonLd";
 import { MonthlyBillPage } from "@/components/MonthlyBillPage";
 import { isMonthYear, getAllMonthYearSlugs, parseMonthYear } from "@/lib/seo/months";
 import { buildMonthlyContent } from "@/lib/content/monthly";
+import { MonthlyGuidesBand, RelatedProvidersBand } from "@/components/ProviderBands";
 
 const SPOKES = ["tariff", "payment-methods", "complaints", "new-connection", "faq"] as const;
 type SpokeKey = (typeof SPOKES)[number];
@@ -106,9 +107,11 @@ export default async function SpokePage(props: { params: Promise<Params> }) {
   const base = `/${country}/${providerBillCheck}`;
   const path = `${base}/${spoke}`;
 
+  const utilityLabel = provider.type.charAt(0).toUpperCase() + provider.type.slice(1);
   const breadcrumb = [
     { name: "Home", href: "/" },
     { name: c.name, href: `/${c.slug}` },
+    { name: `${utilityLabel} bill check`, href: `/${c.slug}/${provider.type}-bill-check` },
     { name: provider.name, href: base },
     { name: SPOKE_LABEL[spoke], href: path },
   ];
@@ -191,6 +194,9 @@ export default async function SpokePage(props: { params: Promise<Params> }) {
           </div>
         )}
       </article>
+
+      <MonthlyGuidesBand providerName={provider.name} base={base} />
+      <RelatedProvidersBand countrySlug={c.slug} excludeSlug={provider.slug} />
     </>
   );
 }

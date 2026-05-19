@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { getCountry } from "@/lib/data/countries";
-import { providersInCountry } from "@/lib/data/providers";
+import { COUNTRIES, getCountry } from "@/lib/data/countries";
+import { PROVIDERS, providersInCountry } from "@/lib/data/providers";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Section } from "@/components/Section";
 import { RemoteImage } from "@/components/RemoteImage";
@@ -133,6 +133,59 @@ export function UtilityHubPage({ countrySlug, type }: { countrySlug: string; typ
           </p>
         </footer>
       </article>
+
+      {/* Cross-link to other utility types in this country */}
+      <section aria-label="Other utility types" className="bg-slate-50 border-t border-slate-200">
+        <div className="container-wide py-8">
+          <h2 className="text-base font-semibold text-slate-900 mb-3">Other utility bills in {c.name}</h2>
+          <div className="flex flex-wrap gap-3">
+            {(["electricity", "gas", "water"] as UtilityType[])
+              .filter((t) => t !== type)
+              .map((t) => (
+                <Link
+                  key={t}
+                  href={`/${c.slug}/${t}-bill-check`}
+                  className="rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-brand-300 hover:text-brand-700 no-underline capitalize"
+                >
+                  {t} bill check →
+                </Link>
+              ))}
+            <Link
+              href={`/${c.slug}`}
+              className="rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-brand-300 hover:text-brand-700 no-underline"
+            >
+              {c.name} overview →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Cross-link to same-region countries */}
+      {(() => {
+        const siblings = COUNTRIES.filter((s) => s.region === c.region && s.slug !== c.slug);
+        if (!siblings.length) return null;
+        return (
+          <section aria-label={`${c.region} countries`} className="border-t border-slate-100">
+            <div className="container-wide py-8">
+              <h2 className="text-base font-semibold text-slate-900 mb-3">More {c.region} bill check guides</h2>
+              <div className="flex flex-wrap gap-2">
+                {siblings.map((sib) => {
+                  const cnt = PROVIDERS.filter((p) => p.countrySlug === sib.slug).length;
+                  return (
+                    <Link
+                      key={sib.slug}
+                      href={`/${sib.slug}/${type}-bill-check`}
+                      className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:border-brand-300 hover:text-brand-700 no-underline"
+                    >
+                      {sib.name}{cnt > 0 ? ` (${cnt})` : ""}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
     </>
   );
 }

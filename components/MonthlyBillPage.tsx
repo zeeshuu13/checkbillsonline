@@ -6,6 +6,7 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { parseMonthYear, getAllMonthYearSlugs } from "@/lib/seo/months";
 import { buildMonthlyContent } from "@/lib/content/monthly";
 import { WebPageJsonLd, FaqJsonLd, BreadcrumbJsonLd } from "@/lib/seo/jsonLd";
+import { RelatedProvidersBand } from "@/components/ProviderBands";
 
 type Props = {
   provider: Provider;
@@ -21,9 +22,11 @@ export function MonthlyBillPage({ provider, country, monthSlug }: Props) {
   const base = `/${country.slug}/${provider.routeSlug}`;
   const path = `${base}/${monthSlug}`;
 
+  const utilityLabel = provider.type.charAt(0).toUpperCase() + provider.type.slice(1);
   const breadcrumb = [
     { name: "Home", href: "/" },
     { name: country.name, href: `/${country.slug}` },
+    { name: `${utilityLabel} bill check`, href: `/${country.slug}/${provider.type}-bill-check` },
     { name: provider.name, href: base },
     { name: parsed.label, href: path },
   ];
@@ -147,6 +150,8 @@ export function MonthlyBillPage({ provider, country, monthSlug }: Props) {
           Last reviewed: {content.lastReviewed} &middot; Information sourced from official provider portals and regulator publications.
         </div>
       </article>
+
+      <RelatedProvidersBand countrySlug={country.slug} excludeSlug={provider.slug} />
     </>
   );
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { COUNTRIES, getCountry } from "@/lib/data/countries";
-import { providersInCountry } from "@/lib/data/providers";
+import { PROVIDERS, providersInCountry } from "@/lib/data/providers";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { RemoteImage } from "@/components/RemoteImage";
 import { Section } from "@/components/Section";
@@ -336,7 +336,41 @@ export default async function CountryHubPage(props: { params: Promise<Params> })
           </p>
         </footer>
       </article>
+
+      <RegionCountriesBand currentSlug={c.slug} region={c.region} />
     </>
+  );
+}
+
+function RegionCountriesBand({ currentSlug, region }: { currentSlug: string; region: string }) {
+  const siblings = COUNTRIES.filter((c) => c.region === region && c.slug !== currentSlug);
+  if (siblings.length === 0) return null;
+  return (
+    <section aria-labelledby="region-countries-heading" className="bg-slate-50 border-t border-slate-200">
+      <div className="container-wide py-10">
+        <h2 id="region-countries-heading" className="text-xl font-semibold tracking-tight text-slate-900">
+          More {region} bill check guides
+        </h2>
+        <ul className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          {siblings.map((sib) => {
+            const provCount = PROVIDERS.filter((p) => p.countrySlug === sib.slug).length;
+            return (
+              <li key={sib.slug}>
+                <Link
+                  href={`/${sib.slug}`}
+                  className="block rounded-lg border border-slate-200 bg-white px-4 py-3 hover:border-brand-300 hover:bg-brand-50 no-underline group"
+                >
+                  <span className="block text-sm font-semibold text-slate-900 group-hover:text-brand-700">{sib.name}</span>
+                  {provCount > 0 && (
+                    <span className="block text-xs text-slate-500 mt-0.5">{provCount} provider{provCount === 1 ? "" : "s"}</span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
   );
 }
 

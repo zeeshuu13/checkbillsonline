@@ -185,7 +185,7 @@ export function SiteHeader() {
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
+    const mq = window.matchMedia("(min-width: 1024px)");
     const close = () => mq.matches && setMobileOpen(false);
     mq.addEventListener("change", close);
     return () => mq.removeEventListener("change", close);
@@ -193,23 +193,26 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 sticky top-0 z-40">
-        <div className="container-wide flex h-16 items-center justify-between gap-4">
-          {/* Logo */}
-          <Link href="/" aria-label={`${SITE.name} home`} className="shrink-0 flex items-center no-underline">
-            <Image
-              src={SITE.logo}
-              alt={SITE.name}
-              width={SITE.logoWidth}
-              height={SITE.logoHeight}
-              priority
-              sizes="(min-width: 768px) 180px, 150px"
-              className="h-9 md:h-10 w-auto"
-            />
-          </Link>
+      <header className="border-b border-slate-200 bg-white sticky top-0 z-40 shadow-sm">
+        <div className="container-wide flex h-16 items-center gap-4">
 
-          {/* Desktop nav */}
-          <nav aria-label="Primary" className="hidden md:flex items-center gap-0.5 flex-1">
+          {/* ── Left: Logo ── */}
+          <div className="flex-1 flex items-center">
+            <Link href="/" aria-label={`${SITE.name} home`} className="shrink-0 flex items-center no-underline">
+              <Image
+                src={SITE.logo}
+                alt={SITE.name}
+                width={SITE.logoWidth}
+                height={SITE.logoHeight}
+                priority
+                sizes="(min-width: 1024px) 180px, 150px"
+                className="h-9 lg:h-10 w-auto"
+              />
+            </Link>
+          </div>
+
+          {/* ── Center: Desktop nav ── */}
+          <nav aria-label="Primary" className="hidden lg:flex items-center gap-0.5">
             {/* Pakistan */}
             <DesktopMenu label="Pakistan" href="/pakistan">
               <div className="p-4 w-80">
@@ -303,19 +306,33 @@ export function SiteHeader() {
             </DesktopMenu>
           </nav>
 
-          {/* Desktop CTA */}
-          <Link
-            href="/#bill-check"
-            className="hidden md:inline-flex items-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-800 no-underline shrink-0"
-          >
-            Check a bill
-          </Link>
+          {/* ── Right: CTAs (desktop) + Hamburger (mobile) ── */}
+          <div className="flex-1 flex items-center justify-end gap-2">
 
-          {/* Mobile: CTA + Hamburger */}
-          <div className="flex md:hidden items-center gap-2">
+            {/* Bill Calculator — desktop */}
+            <Link
+              href="/bill-calculator"
+              className="hidden lg:inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:border-brand-400 hover:text-brand-700 no-underline transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0">
+                <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M4 4h2M8 4h2M4 7h2M8 7h2M4 10h2M8 10h2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+              </svg>
+              Bill Calculator
+            </Link>
+
+            {/* Check a bill — desktop */}
             <Link
               href="/#bill-check"
-              className="rounded-md bg-brand-700 px-3 py-2 text-xs font-semibold text-white no-underline"
+              className="hidden lg:inline-flex items-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-800 no-underline transition-colors"
+            >
+              Check a bill
+            </Link>
+
+            {/* Mobile: compact CTAs + Hamburger */}
+            <Link
+              href="/#bill-check"
+              className="lg:hidden rounded-md bg-brand-700 px-3 py-2 text-xs font-semibold text-white no-underline"
             >
               Check bill
             </Link>
@@ -324,7 +341,7 @@ export function SiteHeader() {
               onClick={() => setMobileOpen((v) => !v)}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
-              className="flex items-center justify-center w-10 h-10 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-md border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors"
             >
               {mobileOpen ? (
                 /* X icon */
@@ -338,13 +355,13 @@ export function SiteHeader() {
                 </svg>
               )}
             </button>
-          </div>
+          </div>{/* end right CTAs */}
         </div>
       </header>
 
       {/* ── Mobile menu panel ── */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 top-16 z-30 bg-white overflow-y-auto" onClick={(e) => { if (e.target === e.currentTarget) setMobileOpen(false); }}>
+        <div className="lg:hidden fixed inset-0 top-16 z-30 bg-white overflow-y-auto" onClick={(e) => { if (e.target === e.currentTarget) setMobileOpen(false); }}>
           <nav aria-label="Mobile navigation" className="divide-y divide-slate-100">
 
             <MobileSection label="Pakistan" href="/pakistan">
@@ -396,7 +413,18 @@ export function SiteHeader() {
               </MobileSection>
             ))}
 
-            <div className="p-4">
+            <div className="p-4 space-y-3">
+              <Link
+                href="/bill-calculator"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-2 w-full rounded-md border border-slate-300 px-4 py-3 text-center text-sm font-semibold text-slate-700 no-underline hover:border-brand-400 hover:text-brand-700 bg-white"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M4 4h2M8 4h2M4 7h2M8 7h2M4 10h2M8 10h2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                </svg>
+                Bill Calculator
+              </Link>
               <Link
                 href="/#countries"
                 onClick={() => setMobileOpen(false)}

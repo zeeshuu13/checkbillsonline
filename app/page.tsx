@@ -13,7 +13,7 @@ import { currentMonthSlug, parseMonthYear, getAllMonthYearSlugs } from "@/lib/se
 
 export const metadata = buildMetadata({
   path: "/",
-  title: "Check Bills Online — Electricity, Gas & Water Bill Check in 30 Countries",
+  title: "Check Electricity Bills Online in Pakistan, India, UAE, USA, UK, Canada, Australia, New Zealand, Bangladesh, Sri Lanka, Nepal, Indonesia, Philippines, Malaysia, Vietnam, Thailand, Singapore, Saudi Arabia, Qatar, Kuwait, Oman, Bahrain, Egypt, Jordan, Nigeria, Kenya, South Africa, Ghana, Tanzania, Ireland | MEPCO, LESCO, IESCO, FESCO, GEPCO, PESCO, HAZECO, HESCO, SEPCO, QESCO, TESCO, K-Electric & All DISCOs, Adani Electricity, Tata Power Mumbai, BSES Rajdhani, DEWA, ADDC, SEWA, SEC, Kahramaa, MEW Kuwait, Mazoon Electricity, EWA Bahrain, EEHC, JEPCO, Con Edison, PG&E, Duke Energy, British Gas, Octopus Energy, Hydro One, AGL, Genesis Energy, Electric Ireland, DESCO, CEB, NEA, PLN, Meralco, TNB, EVN HCMC, MEA, SP Group, EKEDC, Kenya Power, Eskom, ECG, TANESCO — CheckBillsOnline.com",
   description:
     "Check MEPCO, LESCO, IESCO, FESCO, K-Electric, Adani Electricity, DEWA, SEC and 50+ utility bills online. Real-time Pakistan PITC fetch. India BBPS. Gulf deeplinks. Tariff tables, complaint guides, and payment methods for 30 countries.",
   keywords: buildHomeKeywords(),

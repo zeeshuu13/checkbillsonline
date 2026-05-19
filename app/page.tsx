@@ -199,6 +199,12 @@ export default function HomePage() {
             <h1 id="hero-heading" className="mt-3 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-slate-900">
               Check your utility bill, in 30 countries, in seconds.
             </h1>
+
+            {/* Bill check widget shown directly below heading on mobile */}
+            <div id="bill-check" className="mt-6 lg:hidden">
+              <HomeBillCheckWidget />
+            </div>
+
             <p id="hero-intro" className="mt-5 text-lg text-slate-700 max-w-xl">
               MEPCO. LESCO. The other nine Pakistan DISCOs that bill through PITC. Adani Electricity, Tata Power, and BSES on India&apos;s BBPS rail. DEWA, SEC, Kahramaa, and the rest of the Gulf. ConEd, PG&amp;E, British Gas, Octopus Energy, AGL, Hydro One, and the wider Anglosphere. We fetch the bill live where the operator allows it. Where they don&apos;t, we open the official portal with your reference number filled in. Either way the tariff guide on every page is sourced from the regulator that approved it.
             </p>

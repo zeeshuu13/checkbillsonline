@@ -1,0 +1,72 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-brand-50: #f0f7ff;
+  --color-brand-100: #dceaff;
+  --color-brand-200: #b9d4ff;
+  --color-brand-300: #8db8ff;
+  --color-brand-400: #5d95fb;
+  --color-brand-500: #3a73f0;
+  --color-brand-600: #2554d8;
+  --color-brand-700: #1c40ad;
+  --color-brand-800: #1b3789;
+  --color-brand-900: #1b316d;
+  --color-brand-950: #131f44;
+
+  --color-accent-500: #f59f00;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-white text-slate-900 antialiased;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-slate-900;
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  a {
+    @apply text-brand-700 underline-offset-2;
+  }
+
+  a:hover {
+    @apply text-brand-800;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+}
+
+@layer components {
+  .container-tight {
+    @apply mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-wide {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .prose-cb {
+    @apply prose prose-slate max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-brand-700 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-900 prose-li:marker:text-brand-500;
+  }
+}

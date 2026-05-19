@@ -8,6 +8,7 @@ import { COUNTRIES } from "@/lib/data/countries";
 import { PROVIDERS, providersInCountry } from "@/lib/data/providers";
 import { SITE } from "@/lib/site";
 import { WebPageJsonLd } from "@/lib/seo/jsonLd";
+import { currentMonthSlug, parseMonthYear, getAllMonthYearSlugs } from "@/lib/seo/months";
 
 export const metadata = buildMetadata({
   path: "/",
@@ -59,6 +60,115 @@ const HOME_FAQ = [
     a: "Per-country bill calculators are coming in the next editorial phase. For now, every provider's tariff page lists the per-unit rates, fixed charges, and statutory levies from the regulator's current schedule. That's enough to compute an expected bill by hand. Pakistani consumers can also pull their FBR Iris tax-filer status, which determines a 7.5% withholding line that often makes a bigger difference than people realise.",
   },
 ];
+
+// ── Monthly section component ──────────────────────────────────────────────
+function MonthlySection() {
+  const curSlug = currentMonthSlug();
+  const parsed = parseMonthYear(curSlug);
+  const label = parsed?.label ?? curSlug;
+
+  // Featured providers for monthly quick-links: all 12 PK DISCOs + top India + top Gulf
+  const pkP = providersInCountry("pakistan");
+  const inP = providersInCountry("india").slice(0, 3);
+  const gulfP = PROVIDERS.filter((p) => ["uae", "saudi-arabia", "qatar"].includes(p.countrySlug)).slice(0, 3);
+  const featured = [...pkP, ...inP, ...gulfP];
+
+  return (
+    <section aria-labelledby="monthly-heading" className="bg-slate-50 border-t border-slate-200">
+      <div className="container-wide py-16">
+        <div className="max-w-3xl mb-10">
+          <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Monthly bill guides</p>
+          <h2 id="monthly-heading" className="mt-2 text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+            Check Your Bill for {label} — All Providers
+          </h2>
+          <p className="mt-3 text-slate-700">
+            Each link below opens a dedicated guide for checking, understanding, and paying your utility bill for {label}. Tariff context, due-date pointers, and payment options are included on every page.
+          </p>
+        </div>
+        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          {featured.map((p) => (
+            <li key={p.slug}>
+              <Link
+                href={`/${p.countrySlug}/${p.routeSlug}/${curSlug}`}
+                className="flex flex-col rounded-lg border border-slate-200 bg-white px-4 py-3 hover:border-brand-300 hover:bg-brand-50 no-underline group h-full"
+              >
+                <span className="text-sm font-semibold text-slate-900 group-hover:text-brand-800">{p.name}</span>
+                <span className="text-xs text-slate-500 capitalize mt-0.5">{p.countrySlug.replace("-", " ")} &middot; {p.type}</span>
+                <span className="mt-2 text-xs text-brand-700 group-hover:underline">Check {label} bill &rarr;</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 flex gap-4 flex-wrap">
+          {getAllMonthYearSlugs().slice(0, 8).map((slug) => {
+            const p = parseMonthYear(slug);
+            return p ? (
+              <Link key={slug} href={`/pakistan/mepco-bill-check/${slug}`}
+                className={`rounded-full px-4 py-1.5 text-sm font-medium no-underline border ${slug === curSlug ? "bg-brand-700 text-white border-brand-700" : "bg-white text-slate-700 border-slate-200 hover:border-brand-300 hover:text-brand-700"}`}>
+                {p.label}
+              </Link>
+            ) : null;
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Provider directory component ───────────────────────────────────────────
+const REGION_GROUPS: { label: string; countries: string[] }[] = [
+  { label: "Pakistan", countries: ["pakistan"] },
+  { label: "India", countries: ["india"] },
+  { label: "Gulf & Middle East", countries: ["uae", "saudi-arabia", "qatar", "kuwait", "oman", "bahrain", "egypt", "jordan"] },
+  { label: "South & Southeast Asia", countries: ["bangladesh", "sri-lanka", "nepal", "indonesia", "philippines", "malaysia", "vietnam", "thailand", "singapore"] },
+  { label: "Africa", countries: ["nigeria", "kenya", "south-africa", "ghana", "tanzania"] },
+  { label: "Anglosphere", countries: ["usa", "uk", "canada", "australia", "new-zealand", "ireland"] },
+];
+
+function ProviderDirectory() {
+  return (
+    <section aria-labelledby="dir-heading" className="bg-white border-t border-slate-200">
+      <div className="container-wide py-16">
+        <div className="max-w-3xl mb-10">
+          <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">Complete provider directory</p>
+          <h2 id="dir-heading" className="mt-2 text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+            Every Utility Provider on CheckBillsOnline
+          </h2>
+          <p className="mt-3 text-slate-700">
+            56 utility providers across 30 countries. Each link opens a full bill-check guide with tariff tables, payment channels, complaint escalation paths, and a live or deep-link bill form.
+          </p>
+        </div>
+        <div className="space-y-10">
+          {REGION_GROUPS.map((group) => {
+            const groupProviders = PROVIDERS.filter((p) => group.countries.includes(p.countrySlug));
+            if (groupProviders.length === 0) return null;
+            return (
+              <div key={group.label}>
+                <h3 className="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">{group.label}</h3>
+                <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {groupProviders.map((p) => (
+                    <li key={p.slug}>
+                      <Link
+                        href={`/${p.countrySlug}/${p.routeSlug}`}
+                        className="block rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 hover:border-brand-300 hover:bg-brand-50 no-underline group"
+                      >
+                        <span className="block text-sm font-semibold text-slate-900 group-hover:text-brand-800">{p.name}</span>
+                        <span className="block text-xs text-slate-500 capitalize mt-0.5">{p.type} bill check</span>
+                        {p.serviceAreas[0] && (
+                          <span className="block text-xs text-slate-400 truncate">{p.serviceAreas[0]}</span>
+                        )}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function HomePage() {
   const pkProviders = providersInCountry("pakistan").slice(0, 12);
@@ -609,10 +719,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ────────────── 13. Country picker ────────────── */}
+      {/* ────────────── 13. Monthly bill check guides ────────────── */}
+      <MonthlySection />
+
+      {/* ────────────── 14. Country picker ────────────── */}
       <CountryPicker />
 
-      {/* ────────────── 14. FAQ + final CTA ────────────── */}
+      {/* ────────────── 15. Complete provider directory ────────────── */}
+      <ProviderDirectory />
+
+      {/* ────────────── 16. FAQ + final CTA ────────────── */}
       <section aria-labelledby="faq-heading" className="bg-white border-t border-slate-200">
         <div className="container-tight py-16">
           <div className="max-w-3xl">

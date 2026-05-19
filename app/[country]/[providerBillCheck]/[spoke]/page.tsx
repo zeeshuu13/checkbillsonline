@@ -16,6 +16,9 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { CitationsBlock } from "@/components/CitationsBlock";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { WebPageJsonLd, ArticleJsonLd } from "@/lib/seo/jsonLd";
+import { MonthlyBillPage } from "@/components/MonthlyBillPage";
+import { isMonthYear, getAllMonthYearSlugs, parseMonthYear } from "@/lib/seo/months";
+import { buildMonthlyContent } from "@/lib/content/monthly";
 
 const SPOKES = ["tariff", "payment-methods", "complaints", "new-connection", "faq"] as const;
 type SpokeKey = (typeof SPOKES)[number];
@@ -23,13 +26,21 @@ type SpokeKey = (typeof SPOKES)[number];
 type Params = { country: string; providerBillCheck: string; spoke: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
-  return PROVIDERS.flatMap((p) =>
+  const spokeParams = PROVIDERS.flatMap((p) =>
     SPOKES.map((spoke) => ({
       country: p.countrySlug,
       providerBillCheck: p.routeSlug,
       spoke,
     }))
   );
+  const monthlyParams = PROVIDERS.flatMap((p) =>
+    getAllMonthYearSlugs().map((monthYear) => ({
+      country: p.countrySlug,
+      providerBillCheck: p.routeSlug,
+      spoke: monthYear,
+    }))
+  );
+  return [...spokeParams, ...monthlyParams];
 }
 
 function isSpoke(s: string): s is SpokeKey {
@@ -46,10 +57,23 @@ const SPOKE_LABEL: Record<SpokeKey, string> = {
 
 export async function generateMetadata(props: { params: Promise<Params> }): Promise<Metadata> {
   const { country, providerBillCheck, spoke } = await props.params;
-  if (!isSpoke(spoke)) return {};
   const provider = getProvider(country, providerBillCheck);
   const c = getCountry(country);
   if (!provider || !c) return {};
+
+  // Monthly page metadata
+  if (isMonthYear(spoke)) {
+    const monthly = buildMonthlyContent(provider, c, spoke);
+    return buildMetadata({
+      path: `/${country}/${providerBillCheck}/${spoke}`,
+      title: monthly.metaTitle,
+      description: monthly.metaDescription,
+      publishedTime: monthly.lastReviewed,
+      modifiedTime: monthly.lastReviewed,
+    });
+  }
+
+  if (!isSpoke(spoke)) return {};
   const content = getContent(country, providerBillCheck);
   const authored = content?.spokes[spoke];
   const fallbackTitle = `${provider.name} ${SPOKE_LABEL[spoke]} — ${c.name}`;
@@ -66,10 +90,16 @@ export async function generateMetadata(props: { params: Promise<Params> }): Prom
 
 export default async function SpokePage(props: { params: Promise<Params> }) {
   const { country, providerBillCheck, spoke } = await props.params;
-  if (!isSpoke(spoke)) notFound();
   const provider = getProvider(country, providerBillCheck);
   const c = getCountry(country);
   if (!provider || !c) notFound();
+
+  // Monthly bill page branch
+  if (isMonthYear(spoke)) {
+    return <MonthlyBillPage provider={provider} country={c} monthSlug={spoke} />;
+  }
+
+  if (!isSpoke(spoke)) notFound();
 
   const content = getContent(country, providerBillCheck);
   const spokeContent = content?.spokes[spoke];

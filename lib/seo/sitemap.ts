@@ -3,6 +3,7 @@ import { SITE } from "@/lib/site";
 import { COUNTRIES } from "@/lib/data/countries";
 import { PROVIDERS } from "@/lib/data/providers";
 import { CSS_CLUSTER_LINKS } from "@/lib/content/pakistan/cross-subsidy";
+import { getAllMonthYearSlugs } from "@/lib/seo/months";
 
 const SPOKES = ["tariff", "payment-methods", "complaints", "new-connection", "faq"] as const;
 const UTILITY_HUBS = ["electricity-bill-check", "gas-bill-check", "water-bill-check"] as const;
@@ -51,5 +52,15 @@ export function getSitemapEntries(): MetadataRoute.Sitemap {
     lastModified: now,
   }));
 
-  return [...staticPages, ...countryEntries, ...providerEntries, ...cssEntries];
+  const monthSlugs = getAllMonthYearSlugs();
+  const monthlyEntries: MetadataRoute.Sitemap = PROVIDERS.flatMap((p) =>
+    monthSlugs.map((m) => ({
+      url: url(`/${p.countrySlug}/${p.routeSlug}/${m}`),
+      priority: 0.6,
+      changeFrequency: "monthly" as const,
+      lastModified: now,
+    }))
+  );
+
+  return [...staticPages, ...countryEntries, ...providerEntries, ...cssEntries, ...monthlyEntries];
 }

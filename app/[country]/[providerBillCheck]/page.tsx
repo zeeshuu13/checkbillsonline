@@ -16,8 +16,8 @@ import { ComplaintsLadder } from "@/components/ComplaintsLadder";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { CitationsBlock } from "@/components/CitationsBlock";
 import { RemoteImage } from "@/components/RemoteImage";
-import { buildBillCheckKeywords } from "@/lib/seo/metadata";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildBillCheckKeywords, buildMetadata } from "@/lib/seo/metadata";
+import { getAllMonthYearSlugs, parseMonthYear } from "@/lib/seo/months";
 import { WebPageJsonLd, ArticleJsonLd, ServiceJsonLd } from "@/lib/seo/jsonLd";
 
 type Params = { country: string; providerBillCheck: string };
@@ -131,6 +131,7 @@ export default async function ProviderHubPage(props: { params: Promise<Params> }
         )}
       </article>
 
+      <MonthlyGuidesBand providerName={provider.name} base={base} />
       <RelatedProvidersBand countrySlug={c.slug} excludeSlug={provider.slug} />
     </>
   );
@@ -161,6 +162,45 @@ function PlaceholderContent({
         the homepage for the current schedule.
       </p>
     </div>
+  );
+}
+
+function MonthlyGuidesBand({ providerName, base }: { providerName: string; base: string }) {
+  const all = getAllMonthYearSlugs();
+  // Show first 6 months (Jun-Nov 2026)
+  const shown = all.slice(0, 6);
+  return (
+    <section aria-labelledby="monthly-guides-heading" className="bg-brand-50 border-t border-brand-100">
+      <div className="container-wide py-10">
+        <h2 id="monthly-guides-heading" className="text-xl font-bold tracking-tight text-slate-900 mb-1">
+          Monthly {providerName} Bill Guides
+        </h2>
+        <p className="text-sm text-slate-600 mb-5">
+          Step-by-step guides for checking your bill by month — with tariff context, due dates, and payment tips.
+        </p>
+        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          {shown.map((slug) => {
+            const p = parseMonthYear(slug);
+            return p ? (
+              <li key={slug}>
+                <Link
+                  href={`${base}/${slug}`}
+                  className="flex flex-col items-center justify-center rounded-lg border border-brand-200 bg-white px-3 py-4 text-center hover:border-brand-400 hover:bg-brand-50 no-underline group"
+                >
+                  <span className="text-xs font-semibold text-brand-700 group-hover:text-brand-900">{p.label}</span>
+                  <span className="mt-1 text-xs text-slate-500">Bill Guide</span>
+                </Link>
+              </li>
+            ) : null;
+          })}
+        </ul>
+        <div className="mt-4">
+          <Link href={`${base}/june-2026`} className="text-sm text-brand-700 hover:underline no-underline">
+            View all monthly guides &rarr;
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
 

@@ -13,12 +13,13 @@ export function getSitemapEntries(): MetadataRoute.Sitemap {
   const url = (p: string) => new URL(p, SITE.url).toString();
 
   const staticPages: MetadataRoute.Sitemap = [
-    { url: url("/"),           priority: 1.0, changeFrequency: "weekly", lastModified: now },
-    { url: url("/about"),      priority: 0.6, changeFrequency: "yearly", lastModified: now },
-    { url: url("/contact"),    priority: 0.5, changeFrequency: "yearly", lastModified: now },
-    { url: url("/privacy"),    priority: 0.3, changeFrequency: "yearly", lastModified: now },
-    { url: url("/terms"),      priority: 0.3, changeFrequency: "yearly", lastModified: now },
-    { url: url("/disclaimer"), priority: 0.3, changeFrequency: "yearly", lastModified: now },
+    { url: url("/"),                  priority: 1.0, changeFrequency: "weekly",  lastModified: now },
+    { url: url("/bill-calculator"),   priority: 0.8, changeFrequency: "monthly", lastModified: now },
+    { url: url("/about"),             priority: 0.6, changeFrequency: "yearly",  lastModified: now },
+    { url: url("/contact"),           priority: 0.5, changeFrequency: "yearly",  lastModified: now },
+    { url: url("/privacy"),           priority: 0.3, changeFrequency: "yearly",  lastModified: now },
+    { url: url("/terms"),             priority: 0.3, changeFrequency: "yearly",  lastModified: now },
+    { url: url("/disclaimer"),        priority: 0.3, changeFrequency: "yearly",  lastModified: now },
   ];
 
   const countryEntries: MetadataRoute.Sitemap = COUNTRIES.flatMap((c) => {

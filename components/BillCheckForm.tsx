@@ -68,12 +68,17 @@ export function BillCheckForm({ provider }: { provider: Provider }) {
     startTransition(async () => {
       try {
         const res = await fetch(endpoint, { method: "GET", cache: "no-store" });
+        const body = await res.json().catch(() => null);
         if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
           setStatus({ kind: "error", message: typeof body?.error === "string" ? body.error : `Lookup failed (${res.status}).` });
           return;
         }
-        const html = await res.text();
+        // API returns { html, ref } JSON
+        const html = typeof body?.html === "string" ? body.html : "";
+        if (!html) {
+          setStatus({ kind: "error", message: "Empty response from bill portal." });
+          return;
+        }
         setStatus({ kind: "ok-real", html });
       } catch (e) {
         setStatus({ kind: "error", message: e instanceof Error ? e.message : "Network error" });

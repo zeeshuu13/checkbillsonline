@@ -1,16 +1,17 @@
 /**
- * Pakistan PITC bill fetcher — copied from the MEPCO project (lib/pitcBillFetch.ts) with the
- * only difference being that we accept the `pitcBillPath` (e.g. "mepcobill", "lescobill")
- * as a parameter instead of importing from a Pakistan-specific allow-list.
+ * Pakistan PITC bill fetcher — identical logic to checkbills.pk/lib/pitcBillFetch.ts.
  *
- * Original implementation is on `M:\MepcoBill\mepco-web\lib\pitcBillFetch.ts`. Refer to that
- * file for the engineering rationale (IPv4-only undici, budget calculations, retry policy).
+ * PITC (bill.pitc.com.pk) is only reachable from IP ranges that Pakistan's network permits.
+ * When deployed on a US-region VPS, requests time out. Set HTTPS_PROXY to route through
+ * a proxy in a Pakistan-accessible region (India, Singapore, Pakistan):
+ *   HTTPS_PROXY=http://your-proxy-host:port
  *
- * Allow-list lives in lib/data/providers.ts as the set of providers with realApi === "pk-pitc".
+ * Vercel: use preferredRegion bom1/sin1/hkg1 (closer to PK) and no proxy needed.
+ * VPS: set HTTPS_PROXY in the PM2 env or ecosystem config.
  */
 
 import { setDefaultResultOrder } from "node:dns";
-import { Agent, fetch as undiciFetch } from "undici";
+import { Agent, fetch as undiciFetch, ProxyAgent } from "undici";
 import { PROVIDERS } from "@/lib/data/providers";
 
 const ORIGIN = "https://bill.pitc.com.pk";
@@ -29,18 +30,36 @@ function invocationBudgetMs(): number {
     const ms = Number.parseInt(override, 10);
     if (Number.isFinite(ms) && ms >= 3000) return ms;
   }
-  return process.env.VERCEL ? 8_500 : 30_000;
+  const raw = process.env.VERCEL_FUNCTION_MAX_DURATION;
+  if (raw) {
+    const sec = Number.parseInt(raw, 10);
+    if (Number.isFinite(sec) && sec > 0) return Math.max(4000, sec * 1000 - 1500);
+  }
+  if (process.env.VERCEL) return 8_500;
+  return 30_000;
 }
 
 function perRequestBudgetMs(totalBudgetMs: number): number {
   return Math.max(2500, Math.min(6500, Math.floor(totalBudgetMs / 3)));
 }
 
-const pitcAgent = new Agent({
-  connect: { family: 4, timeout: 4_000 },
-  bodyTimeout: 6_000,
-  headersTimeout: 6_000,
-});
+// If HTTPS_PROXY is set, route all PITC traffic through it so US/EU VPS can reach PK networks.
+function makePitcAgent() {
+  const proxy = process.env.HTTPS_PROXY ?? process.env.https_proxy;
+  if (proxy) {
+    return new ProxyAgent({
+      uri: proxy,
+      connect: { family: 4, timeout: 8_000 },
+    });
+  }
+  return new Agent({
+    connect: { family: 4, timeout: 4_000 },
+    bodyTimeout: 10_000,
+    headersTimeout: 10_000,
+  });
+}
+
+const pitcAgent = makePitcAgent();
 
 async function pitcFetch(
   input: string,
@@ -57,15 +76,33 @@ async function pitcFetch(
   const merged: RequestInit = { ...(init ?? {}), signal: controller.signal, cache: "no-store" };
   try {
     try {
-      return (await undiciFetch(input, { ...merged, dispatcher: pitcAgent } as Parameters<typeof undiciFetch>[1])) as unknown as Response;
-    } catch (e) {
-      if (controller.signal.aborted) throw e;
-      try { return await fetch(input, merged); } catch { throw e; }
+      return (await undiciFetch(input, {
+        ...merged,
+        dispatcher: pitcAgent,
+      } as Parameters<typeof undiciFetch>[1])) as unknown as Response;
+    } catch (undiciErr) {
+      if (controller.signal.aborted) throw undiciErr;
+      try { return await fetch(input, merged); } catch { throw undiciErr; }
     }
   } finally {
     clearTimeout(t);
     parentSignal.removeEventListener("abort", onAbort);
   }
+}
+
+function formatPitcNetworkError(e: unknown): string {
+  if (!(e instanceof Error)) return "Could not reach the electricity bill portal. Please try again.";
+  const cause = "cause" in e && e.cause instanceof Error ? e.cause.message : "";
+  const combined = cause ? `${e.message} ${cause}` : e.message;
+  const low = combined.toLowerCase();
+  if (e.name === "TimeoutError" || low.includes("timeout") || low.includes("aborted")) {
+    return "The bill portal did not finish in time. Please try again in a minute, or open your bill on the official PITC website using the link below.";
+  }
+  if (low.includes("fetch failed") || low.includes("econnreset") || low.includes("etimedout") ||
+      low.includes("enotfound") || low.includes("certificate") || low.includes("ssl")) {
+    return "Could not reach the electricity bill portal (connection issue). Please try again in a minute.";
+  }
+  return e.message;
 }
 
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -142,35 +179,56 @@ function hasPitcUserFeedback(html: string): boolean {
   const c = html.replace(/\s+/g, " ");
   if (/does not belongs? to\b/i.test(c)) return true;
   if (/the given input\b/i.test(c)) return true;
+  if (/does not belong\b/i.test(c)) return true;
   if (/invalid\s+reference/i.test(c)) return true;
+  if (/reference\s+number.*invalid/i.test(c)) return true;
+  if (/consumer\s+id.*invalid/i.test(c)) return true;
   if (/no\s+record\s+found/i.test(c)) return true;
+  if (/could\s+not\s+be\s+found/i.test(c)) return true;
   if (/<span[^>]*id="lblSnapError"[^>]*>[\s\S]*?\S[\s\S]*?<\/span>/i.test(html)) return true;
   return false;
 }
 
 function isLikelyBillHtml(html: string): boolean {
-  if (/<title>[^<]*ONLINE BILL<\/title>/i.test(html) && html.includes("maincontent")) return true;
-  if (html.includes("ONLINE BILL") && html.includes("fontsize")) return true;
+  if (/<title>[^<]*ONLINE BILL<\/title>/i.test(html) && html.includes("maincontent") && html.includes("fontsize")) return true;
+  if (html.includes("MEPCO ONLINE BILL")) return true;
+  if (html.includes("MULTAN ELECTRIC POWER COMPANY") && (html.includes("maincontent") || html.includes("fontsize"))) return true;
+  if (html.includes("LESCO ONLINE BILL")) return true;
+  if (html.includes("LAHORE ELECTRIC SUPPLY COMPANY") && (html.includes("maincontent") || html.includes("fontsize"))) return true;
+  // Generic fallback for other DISCOs (IESCO, FESCO, GEPCO, PESCO, HESCO, SEPCO, QESCO, TESCO, HAZECO)
+  if (html.includes("ONLINE BILL") && (html.includes("fontsize") || html.includes("maincontent"))) return true;
   return false;
+}
+
+function isSearchFormHtml(html: string): boolean {
+  if (!html.includes("Search Your Electricity Bill")) return false;
+  if (hasPitcUserFeedback(html)) return false;
+  if (html.includes("maincontent") && html.includes("fontsize")) return false;
+  if (/<title>[^<]*ONLINE BILL<\/title>/i.test(html)) return false;
+  return true;
 }
 
 export type FetchPitcBillResult =
   | { ok: true; html: string; ref: string }
-  | { ok: false; error: string; status: number };
+  | { ok: false; error: string; status: number; preview?: string };
 
 export function isAllowedPitcBillPath(p: string): boolean {
   return ALLOWED_PATHS.has(p.trim().toLowerCase());
 }
 
-async function fetchOnce(ref: string, base: string, signal: AbortSignal, perReq: number): Promise<FetchPitcBillResult> {
-  const sess = await pitcFetch(base, { headers: BROWSER_HEADERS }, perReq, signal);
-  const cookies1 = cookieHeaderFromResponse(sess);
-  const html = await sess.text();
-  if (!sess.ok) return { ok: false, error: `PITC ${sess.status}`, status: 502 };
-  if (!cookies1) return { ok: false, error: "No session cookies from PITC.", status: 502 };
-  if (!extractHidden(html, "__VIEWSTATE")) return { ok: false, error: "PITC page missing __VIEWSTATE.", status: 502 };
+async function fetchOnce(
+  ref: string, base: string, signal: AbortSignal, perReq: number
+): Promise<FetchPitcBillResult> {
+  const sessRes = await pitcFetch(base, { headers: BROWSER_HEADERS }, perReq, signal);
+  const cookies1 = cookieHeaderFromResponse(sessRes);
+  const sessHtml = await sessRes.text();
 
-  const post = await pitcFetch(
+  if (!sessRes.ok) return { ok: false, error: `PITC session page returned ${sessRes.status}`, status: 502 };
+  if (!cookies1) return { ok: false, error: "Could not read session cookies from PITC.", status: 502 };
+  const vs = extractHidden(sessHtml, "__VIEWSTATE");
+  if (!vs) return { ok: false, error: "Could not parse PITC search form (missing __VIEWSTATE). The portal layout may have changed.", status: 502 };
+
+  const postRes = await pitcFetch(
     base,
     {
       method: "POST",
@@ -181,48 +239,65 @@ async function fetchOnce(ref: string, base: string, signal: AbortSignal, perReq:
         Referer: base,
         Origin: ORIGIN,
       },
-      body: formBody(html, ref).toString(),
+      body: formBody(sessHtml, ref).toString(),
       redirect: "manual",
     },
     perReq, signal
   );
-  const cookies2 = mergeCookies(cookies1, cookieHeaderFromResponse(post));
+  const cookies2 = mergeCookies(cookies1, cookieHeaderFromResponse(postRes));
 
-  let body = "";
-  if (post.status === 301 || post.status === 302) {
-    const loc = post.headers.get("location");
-    if (!loc) return { ok: false, error: "PITC redirect without Location.", status: 502 };
-    const final = new URL(loc, ORIGIN).href;
-    const getRes = await pitcFetch(final, { headers: { ...BROWSER_HEADERS, Cookie: cookies2, Referer: base } }, perReq, signal);
-    body = await getRes.text();
-    if (!getRes.ok) return { ok: false, error: `PITC ${getRes.status}`, status: 502 };
-  } else if (post.ok) {
-    body = await post.text();
+  let html = "";
+  if (postRes.status === 301 || postRes.status === 302) {
+    const loc = postRes.headers.get("location");
+    if (!loc) return { ok: false, error: "PITC POST returned redirect without Location.", status: 502 };
+    const finalUrl = new URL(loc, ORIGIN).href;
+    const getRes = await pitcFetch(
+      finalUrl,
+      { headers: { ...BROWSER_HEADERS, Cookie: cookies2, Referer: base } },
+      perReq, signal
+    );
+    html = await getRes.text();
+    if (!getRes.ok) return { ok: false, error: `PITC bill page returned ${getRes.status}`, status: 502 };
+  } else if (postRes.ok) {
+    html = await postRes.text();
   } else {
-    return { ok: false, error: `PITC POST ${post.status}`, status: 502 };
+    return { ok: false, error: `PITC search POST returned ${postRes.status}`, status: 502 };
   }
 
-  if (hasPitcUserFeedback(body)) return { ok: true, html: body, ref };
-  if (isLikelyBillHtml(body)) return { ok: true, html: body, ref };
-  return { ok: false, error: "Unexpected response from PITC (not a bill page).", status: 502 };
+  if (hasPitcUserFeedback(html)) return { ok: true, html, ref };
+  if (isLikelyBillHtml(html)) return { ok: true, html, ref };
+  if (isSearchFormHtml(html)) return { ok: false, error: "PITC still showed the search form. Check the reference number or try again.", status: 502 };
+
+  return { ok: false, error: "Unexpected response from PITC (not a recognized bill page).", status: 502, preview: html.slice(0, 280) };
 }
 
 export async function fetchPitcBill(ref: string, pitcBillPath: string): Promise<FetchPitcBillResult> {
   const path = pitcBillPath.trim().replace(/^\/+/, "").toLowerCase();
   if (!isAllowedPitcBillPath(path)) return { ok: false, error: "Unsupported distribution company.", status: 400 };
+
   const base = `${ORIGIN}/${path}`;
   const budget = invocationBudgetMs();
   const perReq = perRequestBudgetMs(budget);
   const signal = AbortSignal.timeout(budget);
   const maxAttempts = budget >= perReq * 1.7 ? 2 : 1;
 
+  const isRetryable = (r: FetchPitcBillResult) =>
+    !r.ok &&
+    r.status === 502 &&
+    typeof r.error === "string" &&
+    (r.error.includes("session cookies") ||
+      r.error.includes("__VIEWSTATE") ||
+      r.error.includes("still showed the search form") ||
+      r.error.startsWith("PITC session page returned"));
+
   let lastErr: unknown;
   let lastResult: FetchPitcBillResult | null = null;
+
   for (let i = 0; i < maxAttempts; i++) {
     if (signal.aborted) break;
     try {
       const r = await fetchOnce(ref, base, signal, perReq);
-      if (r.ok || r.status !== 502) return r;
+      if (r.ok || !isRetryable(r)) return r;
       lastResult = r;
     } catch (e) {
       lastErr = e;
@@ -230,10 +305,11 @@ export async function fetchPitcBill(ref: string, pitcBillPath: string): Promise<
     }
     if (i < maxAttempts - 1) await new Promise((r) => setTimeout(r, 250));
   }
+
   if (lastResult) return lastResult;
   return {
     ok: false,
-    error: lastErr instanceof Error ? lastErr.message : "Network error reaching PITC.",
+    error: formatPitcNetworkError(lastErr),
     status: signal.aborted ? 504 : 502,
   };
 }

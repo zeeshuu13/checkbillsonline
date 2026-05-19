@@ -5,6 +5,7 @@ const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
+  output: process.env.BUILD_STANDALONE === "1" ? "standalone" : undefined,
   // Scope the workspace root to THIS folder so Turbopack doesn't pick up the parent MEPCO project.
   turbopack: { root: path.resolve(__dirname) },
   outputFileTracingRoot: path.resolve(__dirname),

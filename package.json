@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3100",
     "build": "next build",
+    "build:hostinger": "BUILD_STANDALONE=1 next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "start": "next start -p 3100",
     "lint": "next lint",
     "fetch:images": "node scripts/fetch-images.mjs",

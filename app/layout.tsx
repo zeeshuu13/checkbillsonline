@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/lib/seo/jsonLd";
 import { SITE } from "@/lib/site";
+
+const GA_ID = "G-H41JGXD19K";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -99,6 +102,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen flex flex-col">
+        {/* Google Analytics — loads after page is interactive, never blocks FCP/LCP */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga-init" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_ID}', { send_page_view: true });
+        `}</Script>
         <OrganizationJsonLd />
         <WebSiteJsonLd />
         <SiteHeader />

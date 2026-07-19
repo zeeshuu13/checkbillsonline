@@ -6,6 +6,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/lib/seo/jsonLd";
 import { SITE } from "@/lib/site";
+import { AdBanner } from "@/components/AdBanner";
+import { InvokeAd } from "@/components/InvokeAd";
 
 const GA_ID = "G-H41JGXD19K";
 
@@ -102,7 +104,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen flex flex-col">
-        {/* Google Analytics — loads after page is interactive, never blocks FCP/LCP */}
+        {/* Google Analytics */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
           strategy="afterInteractive"
@@ -113,12 +115,56 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           gtag('js', new Date());
           gtag('config', '${GA_ID}', { send_page_view: true });
         `}</Script>
+
+        {/* Adsterra Popunder */}
+        <Script
+          src="https://calculatepredestinationset.com/bc/b8/22/bcb8226f00e192337555895aaa5c7202.js"
+          strategy="afterInteractive"
+        />
+
+        {/* Adsterra Social Bar */}
+        <Script
+          src="https://calculatepredestinationset.com/cd/d0/1b/cdd01bdc5c7ddbd223ba69703e2b7d0c.js"
+          strategy="lazyOnload"
+        />
+
         <OrganizationJsonLd />
         <WebSiteJsonLd />
         <SiteHeader />
+
+        {/* Leaderboard (728x90) desktop / Mobile banner (320x50) */}
+        <div className="flex justify-center py-1 bg-gray-50">
+          <div className="hidden md:block">
+            <AdBanner adKey="7beb05982d6060d9bc8d4f9aedd64b76" width={728} height={90} />
+          </div>
+          <div className="md:hidden">
+            <AdBanner adKey="5e2e1126f024d8ebf6cf82954a920879" width={320} height={50} />
+          </div>
+        </div>
+
         <main id="main" className="flex-1">
           {children}
         </main>
+
+        {/* Invoke.js display ad */}
+        <InvokeAd className="py-2" />
+
+        {/* 468x60 banner */}
+        <div className="flex justify-center py-2">
+          <AdBanner adKey="a8f3bfef5eb5dd5fb59611a43f1a8492" width={468} height={60} />
+        </div>
+
+        {/* 300x250 medium rectangle */}
+        <div className="flex justify-center py-2">
+          <AdBanner adKey="7ee8f6723303c65503a5971d0dfcad15" width={300} height={250} />
+        </div>
+
+        {/* Skyscraper ads side by side (hidden on mobile) */}
+        <div className="hidden md:flex justify-center gap-4 py-2">
+          <AdBanner adKey="bc6b96e4f270519fda1e7b924267b57b" width={160} height={300} />
+          <AdBanner adKey="fa6c45dc2df2353d9ef359fe7f5c9c81" width={160} height={600} />
+        </div>
+
         <SiteFooter />
       </body>
     </html>

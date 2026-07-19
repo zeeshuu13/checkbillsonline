@@ -1,4 +1,9 @@
 import Link from "next/link";
+import {
+  CheckCircle2, TrendingUp, Clock, AlertTriangle, Home, Lightbulb,
+  Truck, Shield, Lock, Globe, Zap, ArrowRight, MousePointerClick,
+  Hash, Monitor, Flame, Droplets,
+} from "lucide-react";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { buildHomeKeywords } from "@/lib/seo/homeKeywords";
 import { CountryPicker } from "@/components/CountryPicker";
@@ -13,9 +18,9 @@ import { currentMonthSlug, parseMonthYear, getAllMonthYearSlugs } from "@/lib/se
 
 export const metadata = buildMetadata({
   path: "/",
-  title: "Check Electricity Bills Online in Pakistan, India, UAE, USA, UK, Canada, Australia, New Zealand, Bangladesh, Sri Lanka, Nepal, Indonesia, Philippines, Malaysia, Vietnam, Thailand, Singapore, Saudi Arabia, Qatar, Kuwait, Oman, Bahrain, Egypt, Jordan, Nigeria, Kenya, South Africa, Ghana, Tanzania, Ireland | MEPCO, LESCO, IESCO, FESCO, GEPCO, PESCO, HAZECO, HESCO, SEPCO, QESCO, TESCO, K-Electric & All DISCOs, Adani Electricity, Tata Power Mumbai, BSES Rajdhani, DEWA, ADDC, SEWA, SEC, Kahramaa, MEW Kuwait, Mazoon Electricity, EWA Bahrain, EEHC, JEPCO, Con Edison, PG&E, Duke Energy, British Gas, Octopus Energy, Hydro One, AGL, Genesis Energy, Electric Ireland, DESCO, CEB, NEA, PLN, Meralco, TNB, EVN HCMC, MEA, SP Group, EKEDC, Kenya Power, Eskom, ECG, TANESCO — CheckBillsOnline.com",
+  title: "Check Electricity Bill Online — MEPCO, LESCO, DEWA, Adani & 50+ Providers",
   description:
-    "Check MEPCO, LESCO, IESCO, FESCO, K-Electric, Adani Electricity, DEWA, SEC and 50+ utility bills online. Real-time Pakistan PITC fetch. India BBPS. Gulf deeplinks. Tariff tables, complaint guides, and payment methods for 30 countries.",
+    "Check your electricity, gas or water bill online — Pakistan (MEPCO, LESCO, IESCO, all DISCOs via PITC), India (Adani, Tata Power, BSES via BBPS), UAE (DEWA, ADDC, SEWA), and 27 more countries. Live lookup where supported. Tariff tables, complaint guides, free.",
   keywords: buildHomeKeywords(),
 });
 
@@ -220,10 +225,10 @@ export default function HomePage() {
               </Link>
             </div>
             <ul className="mt-8 grid sm:grid-cols-2 gap-2 text-sm text-slate-700">
-              <li className="flex gap-2"><span aria-hidden className="text-brand-600">✓</span> 30 countries, 100+ providers</li>
-              <li className="flex gap-2"><span aria-hidden className="text-brand-600">✓</span> Real-time fetch where supported</li>
-              <li className="flex gap-2"><span aria-hidden className="text-brand-600">✓</span> Tariff sourced from regulators</li>
-              <li className="flex gap-2"><span aria-hidden className="text-brand-600">✓</span> Zero data stored, ever</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-brand-600 shrink-0" aria-hidden /> 30 countries, 50+ providers</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-brand-600 shrink-0" aria-hidden /> Real-time fetch where supported</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-brand-600 shrink-0" aria-hidden /> Tariff sourced from regulators</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-brand-600 shrink-0" aria-hidden /> Zero data stored, ever</li>
             </ul>
           </div>
           <div>
@@ -231,6 +236,34 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ────────────── Trust bar ────────────── */}
+      <div className="bg-slate-900 text-white">
+        <div className="container-wide py-4">
+          <ul className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm">
+            <li className="flex items-center gap-2 text-slate-300">
+              <Globe className="h-4 w-4 text-brand-400 shrink-0" aria-hidden />
+              <span>30 countries covered</span>
+            </li>
+            <li className="flex items-center gap-2 text-slate-300">
+              <Shield className="h-4 w-4 text-brand-400 shrink-0" aria-hidden />
+              <span>Tariff data from official regulators</span>
+            </li>
+            <li className="flex items-center gap-2 text-slate-300">
+              <Lock className="h-4 w-4 text-brand-400 shrink-0" aria-hidden />
+              <span>Zero data stored — ever</span>
+            </li>
+            <li className="flex items-center gap-2 text-slate-300">
+              <Zap className="h-4 w-4 text-brand-400 shrink-0" aria-hidden />
+              <span>Live lookup for Pakistan &amp; India</span>
+            </li>
+            <li className="flex items-center gap-2 text-slate-300">
+              <CheckCircle2 className="h-4 w-4 text-brand-400 shrink-0" aria-hidden />
+              <span>Free, no account needed</span>
+            </li>
+          </ul>
+        </div>
+      </div>
 
       {/* ────────────── 2. How it works ────────────── */}
       <section aria-labelledby="how-heading" className="bg-white border-b border-slate-200">
@@ -246,22 +279,31 @@ export default function HomePage() {
           </div>
           <div className="mt-10 grid md:grid-cols-3 gap-6">
             <div className="rounded-xl border border-slate-200 bg-white p-6">
-              <div className="text-3xl font-bold text-brand-700">1</div>
-              <h3 className="mt-2 text-lg font-semibold text-slate-900">Pick country and provider</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-700 text-sm font-bold text-white">1</div>
+                <MousePointerClick className="h-5 w-5 text-brand-500" aria-hidden />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900">Pick country and provider</h3>
               <p className="mt-2 text-sm text-slate-700">
                 Tap any country card on this page, or use the picker further down. You land on a provider hub with a single input field. It takes whatever identifier your local utility prints at the top of its bill: reference number, account number, consumer number, CA number, premise number. The label changes by country. The flow doesn&apos;t.
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-6">
-              <div className="text-3xl font-bold text-brand-700">2</div>
-              <h3 className="mt-2 text-lg font-semibold text-slate-900">Enter your reference</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-700 text-sm font-bold text-white">2</div>
+                <Hash className="h-5 w-5 text-brand-500" aria-hidden />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900">Enter your reference</h3>
               <p className="mt-2 text-sm text-slate-700">
                 We validate the shape of your input before submission. 10 to 14 digits for Pakistan. 9 to 12 for India. 10 for the UAE. Up to 15 for the USA. Each provider page lists the exact format with a worked example, and the form catches obvious typos before they reach the operator.
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-6">
-              <div className="text-3xl font-bold text-brand-700">3</div>
-              <h3 className="mt-2 text-lg font-semibold text-slate-900">Bill on screen, sources cited</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-700 text-sm font-bold text-white">3</div>
+                <Monitor className="h-5 w-5 text-brand-500" aria-hidden />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900">Bill on screen, sources cited</h3>
               <p className="mt-2 text-sm text-slate-700">
                 For supported providers, the bill loads in 2 to 5 seconds. For the rest, we open the operator&apos;s own portal in a new tab with your reference already filled in. Either way, the long-form guide below the form decodes every charge on the bill and tells you which regulator approved which line.
               </p>
@@ -285,46 +327,46 @@ export default function HomePage() {
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
-                icon: "📈",
+                Icon: TrendingUp,
                 q: "Bill too high this month?",
                 detail: "Understand which tariff slab you landed in, check for fuel adjustment charges, and spot meter-read errors.",
                 href: "/pakistan/mepco-bill-check/tariff",
-                cta: "See tariff breakdown →",
+                cta: "See tariff breakdown",
               },
               {
-                icon: "⏰",
+                Icon: Clock,
                 q: "Missed the due date?",
                 detail: "Know the late payment surcharge, when disconnection notices are issued, and how to pay overdue bills quickly.",
                 href: "/pakistan/mepco-bill-check/payment-methods",
-                cta: "Payment options →",
+                cta: "Payment options",
               },
               {
-                icon: "⚠️",
+                Icon: AlertTriangle,
                 q: "Bill shows wrong reading?",
                 detail: "Learn how to raise a meter dispute, what evidence you need, and the statutory response deadlines in your country.",
                 href: "/pakistan/mepco-bill-check/complaints",
-                cta: "Complaint guide →",
+                cta: "Complaint guide",
               },
               {
-                icon: "🏠",
+                Icon: Home,
                 q: "Need a new connection?",
                 detail: "Step-by-step new connection application — documents, fees, load category, and expected timelines.",
                 href: "/pakistan/mepco-bill-check/new-connection",
-                cta: "New connection steps →",
+                cta: "New connection steps",
               },
               {
-                icon: "💡",
+                Icon: Lightbulb,
                 q: "Want to reduce your bill?",
                 detail: "Pakistan's Cross Subsidy Program gives protected tariff rates to eligible low-usage households — free registration, instant impact.",
                 href: "/pakistan/cross-subsidy-program",
-                cta: "CSS program guide →",
+                cta: "CSS program guide",
               },
               {
-                icon: "📦",
+                Icon: Truck,
                 q: "Moving house or premises?",
                 detail: "Transfer your account, close your old connection, and avoid bills for a property you've left — the exact process for your utility.",
                 href: "/pakistan/mepco-bill-check/faq",
-                cta: "Moving FAQ →",
+                cta: "Moving FAQ",
               },
             ].map((card) => (
               <li key={card.href}>
@@ -332,10 +374,13 @@ export default function HomePage() {
                   href={card.href}
                   className="flex flex-col h-full rounded-xl border border-brand-200 bg-white p-5 hover:border-brand-400 hover:shadow-sm no-underline group transition-shadow"
                 >
-                  <span className="text-2xl mb-3" aria-hidden>{card.icon}</span>
+                  <card.Icon className="h-6 w-6 text-brand-600 mb-3" aria-hidden />
                   <h3 className="text-base font-semibold text-slate-900 group-hover:text-brand-800">{card.q}</h3>
                   <p className="mt-2 text-sm text-slate-600 flex-1">{card.detail}</p>
-                  <span className="mt-4 text-sm font-medium text-brand-700 group-hover:underline">{card.cta}</span>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand-700 group-hover:underline">
+                    {card.cta}
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                  </span>
                 </Link>
               </li>
             ))}
@@ -639,7 +684,10 @@ export default function HomePage() {
                 alt="Distribution transformer. The backbone of every residential electricity grid."
                 className="aspect-[4/3] w-full rounded-lg mb-4"
               />
-              <h3 className="text-lg font-semibold text-slate-900">Electricity</h3>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-900">
+                <Zap className="h-5 w-5 text-brand-600" aria-hidden />
+                Electricity
+              </h3>
               <p className="mt-2 text-sm text-slate-700">
                 The biggest coverage on this site. Every one of our 30 countries has electricity-bill pages. Slabbed tariffs are universal in developing markets. Competitive retail with price-cap regulation dominates in mature ones. Fuel pass-through (called FPA, FAC, or fuel surcharge depending on the country) is the most volatile line on most electricity bills, often shifting 10 to 25 percent month-to-month with no change in your consumption. Our tariff pages show the slab table per provider and explain the math behind the pass-through.
               </p>
@@ -650,7 +698,10 @@ export default function HomePage() {
                 alt="A gas hob with a blue flame. Domestic gas supply from a regulated retailer."
                 className="aspect-[4/3] w-full rounded-lg mb-4"
               />
-              <h3 className="text-lg font-semibold text-slate-900">Gas</h3>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-900">
+                <Flame className="h-5 w-5 text-orange-500" aria-hidden />
+                Gas
+              </h3>
               <p className="mt-2 text-sm text-slate-700">
                 Gas is most relevant in the UK, Ireland, parts of the US (Northeast and California), Pakistan (SNGPL, SSGC), and parts of India. In the UK and Ireland, gas is usually bundled with electricity by the same retailer: British Gas, EDF, Bord Gáis Energy, Electric Ireland. In Pakistan, SNGPL covers the north and SSGC the south, and both bill separately from electricity. The line items on a gas bill are usually a unit (kWh or therm) charge plus a daily standing charge plus VAT or GST.
               </p>
@@ -661,7 +712,10 @@ export default function HomePage() {
                 alt="A water tap with a falling drop. Municipal water supply, billed by a local water board or city utility."
                 className="aspect-[4/3] w-full rounded-lg mb-4"
               />
-              <h3 className="text-lg font-semibold text-slate-900">Water</h3>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-900">
+                <Droplets className="h-5 w-5 text-sky-500" aria-hidden />
+                Water
+              </h3>
               <p className="mt-2 text-sm text-slate-700">
                 Water bills usually come from municipal water boards (India, Pakistan, much of Africa) or regulated water companies (UK Ofwat, USA per-utility). The bill is simpler than electricity. A per-cubic-metre volumetric charge plus a fixed standing charge, sometimes with sewerage charges added on the same bill. Water shortage tariffs and step-up rates, where additional consumption is priced higher to discourage use, are getting more common in water-stressed parts of the Middle East and Africa.
               </p>

@@ -1,3 +1,4 @@
+import { CheckCircle2 } from "lucide-react";
 import type { Provider } from "@/lib/types";
 import type { Country } from "@/lib/types";
 import { BillCheckForm } from "@/components/BillCheckForm";
@@ -31,9 +32,18 @@ export function HeroBillCheck({ country, provider }: Props) {
             Enter your {provider.referenceFormat.label.toLowerCase()} to view your latest {provider.name} bill amount, due date, and consumption.
           </p>
           <ul className="mt-6 grid gap-2 text-sm text-slate-700">
-            <li className="flex gap-2"><span aria-hidden className="text-brand-600">✓</span> Official source — we route to {provider.legalName}.</li>
-            <li className="flex gap-2"><span aria-hidden className="text-brand-600">✓</span> No login required.</li>
-            <li className="flex gap-2"><span aria-hidden className="text-brand-600">✓</span> Free to use, every time.</li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-brand-600 shrink-0 mt-0.5" aria-hidden />
+              Official source — we route to {provider.legalName}.
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-brand-600 shrink-0 mt-0.5" aria-hidden />
+              No login required.
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-brand-600 shrink-0 mt-0.5" aria-hidden />
+              Free to use, every time.
+            </li>
           </ul>
         </div>
 

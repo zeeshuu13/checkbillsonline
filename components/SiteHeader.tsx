@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ChevronDown, Menu, X, Calculator } from "lucide-react";
 import { SITE } from "@/lib/site";
 
 // ── Nav data ──────────────────────────────────────────────────────────────────
@@ -85,16 +86,6 @@ const MORE_COLS = [
   },
 ];
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function ChevronDown({ className = "" }: { className?: string }) {
-  return (
-    <svg className={className} width="12" height="12" viewBox="0 0 12 12" fill="none">
-      <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 // ── Mega-menu desktop dropdown ────────────────────────────────────────────────
 
 function DesktopMenu({
@@ -130,7 +121,7 @@ function DesktopMenu({
         className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-700 hover:text-brand-700 rounded-md no-underline"
       >
         {label}
-        <ChevronDown className={`transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} />
       </Link>
       {open && (
         <div className="absolute left-0 top-full pt-1 z-50">
@@ -170,7 +161,7 @@ function MobileSection({
           className="px-4 py-3 text-slate-500"
           aria-expanded={open}
         >
-          <ChevronDown className={`transition-transform ${open ? "rotate-180" : ""}`} />
+          <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
       </div>
       {open && <div className="pb-3">{children}</div>}
@@ -314,10 +305,7 @@ export function SiteHeader() {
               href="/bill-calculator"
               className="hidden lg:inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:border-brand-400 hover:text-brand-700 no-underline transition-colors"
             >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0">
-                <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.4"/>
-                <path d="M4 4h2M8 4h2M4 7h2M8 7h2M4 10h2M8 10h2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-              </svg>
+              <Calculator className="h-3.5 w-3.5 shrink-0" />
               Bill Calculator
             </Link>
 
@@ -344,15 +332,9 @@ export function SiteHeader() {
               className="lg:hidden flex items-center justify-center w-10 h-10 rounded-md border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors"
             >
               {mobileOpen ? (
-                /* X icon */
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M3 3l12 12M15 3L3 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
+                <X className="h-4.5 w-4.5" />
               ) : (
-                /* Hamburger icon */
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
+                <Menu className="h-4.5 w-4.5" />
               )}
             </button>
           </div>{/* end right CTAs */}
@@ -419,10 +401,7 @@ export function SiteHeader() {
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center justify-center gap-2 w-full rounded-md border border-slate-300 px-4 py-3 text-center text-sm font-semibold text-slate-700 no-underline hover:border-brand-400 hover:text-brand-700 bg-white"
               >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.4"/>
-                  <path d="M4 4h2M8 4h2M4 7h2M8 7h2M4 10h2M8 10h2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-                </svg>
+                <Calculator className="h-3.5 w-3.5" />
                 Bill Calculator
               </Link>
               <Link

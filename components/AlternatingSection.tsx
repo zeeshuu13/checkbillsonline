@@ -1,3 +1,4 @@
+import { CheckCircle2 } from "lucide-react";
 import type { ContentSection } from "@/lib/content/types";
 import { RemoteImage } from "@/components/RemoteImage";
 import { Callout } from "@/components/Callout";
@@ -61,7 +62,7 @@ export function AlternatingSection({ section, imageQuery, imageIndex = 0, flip =
         <ul className="space-y-2 text-slate-700">
           {section.bullets.map((b, i) => (
             <li key={i} className="flex gap-2">
-              <span aria-hidden className="mt-1 text-brand-600 shrink-0">✓</span>
+              <CheckCircle2 className="h-4 w-4 text-brand-600 shrink-0 mt-1" aria-hidden />
               <span>{b}</span>
             </li>
           ))}

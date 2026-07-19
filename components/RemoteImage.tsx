@@ -53,10 +53,15 @@ type Props = {
   className?: string;
   /** Pick the Nth image (0 = first). */
   index?: number;
-  /** Force LCP candidate; only set on hero image. */
+  /**
+   * Mark as the LCP candidate — renders eagerly with high fetchpriority.
+   * Set this on the first image visible without scrolling on each page.
+   */
   priority?: boolean;
   /** Sizes hint for responsive images. */
   sizes?: string;
+  /** Image quality 1–100. Default 85. Only applies when Next.js optimizes the image. */
+  quality?: number;
 };
 
 /**
@@ -68,12 +73,12 @@ type Props = {
  * record carries that data. Picsum has no attribution requirement, so the
  * caption is omitted for fallback images.
  */
-export function RemoteImage({ query, alt, className, index = 0, priority, sizes }: Props) {
+export function RemoteImage({ query, alt, className, index = 0, priority, sizes, quality = 85 }: Props) {
   const bucket = INDEX[query];
   const record = bucket?.[index] ?? picsumFallback(query);
   const isPicsum = record.id.toString().startsWith("picsum-");
-  // Unsplash already serves size-optimised JPEGs via URL params; bypassing
-  // the Next.js image optimizer avoids server-side rate-limiting by Unsplash.
+  // Unsplash serves size-optimised JPEGs via their own CDN URL params.
+  // Letting Next.js re-encode them would add latency without quality gain.
   const isUnsplash = record.src.includes("images.unsplash.com");
   const skipOptimization = isPicsum || isUnsplash;
 
@@ -86,6 +91,8 @@ export function RemoteImage({ query, alt, className, index = 0, priority, sizes 
         height={record.height}
         sizes={sizes ?? "(min-width: 1024px) 720px, 100vw"}
         priority={priority}
+        loading={priority ? "eager" : "lazy"}
+        quality={skipOptimization ? undefined : quality}
         unoptimized={skipOptimization}
         className={`rounded-lg ${className ?? "h-auto w-full"}`}
       />

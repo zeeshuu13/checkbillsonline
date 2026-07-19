@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MapPin, ChevronRight } from "lucide-react";
 import { COUNTRIES_BY_REGION } from "@/lib/data/countries";
 
 const REGION_ORDER = [
@@ -27,7 +28,8 @@ export function CountryPicker() {
             if (!list.length) return null;
             return (
               <div key={region}>
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-700">
+                <h3 className="flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-brand-700">
+                  <MapPin className="h-3.5 w-3.5" aria-hidden />
                   {region}
                 </h3>
                 <ul className="mt-3 grid grid-cols-1 gap-1.5">
@@ -35,10 +37,13 @@ export function CountryPicker() {
                     <li key={c.slug}>
                       <Link
                         href={`/${c.slug}`}
-                        className="block rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 hover:border-brand-300 hover:text-brand-700 no-underline"
+                        className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 hover:border-brand-300 hover:text-brand-700 no-underline group"
                       >
-                        <span className="font-medium">{c.name}</span>
-                        <span className="ml-2 text-xs text-slate-500">{c.currency.code}</span>
+                        <span>
+                          <span className="font-medium">{c.name}</span>
+                          <span className="ml-2 text-xs text-slate-500">{c.currency.code}</span>
+                        </span>
+                        <ChevronRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-brand-500 shrink-0" aria-hidden />
                       </Link>
                     </li>
                   ))}

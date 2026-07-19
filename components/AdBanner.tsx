@@ -13,7 +13,7 @@ export function AdBanner({ adKey, width, height, className }: AdBannerProps) {
 
   useEffect(() => {
     if (!ref.current) return;
-    (window as Record<string, unknown>).atOptions = {
+    (window as unknown as Record<string, unknown>).atOptions = {
       key: adKey,
       format: 'iframe',
       height,

@@ -10,7 +10,8 @@
     "lint": "next lint",
     "fetch:images": "node scripts/fetch-images.mjs",
     "audit:content": "node scripts/audit-content.mjs",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "geo-audit": "node scripts/geo-audit.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.25.0",

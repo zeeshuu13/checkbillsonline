@@ -13,7 +13,7 @@ import { HomeBillCheckWidget } from "@/components/HomeBillCheckWidget";
 import { COUNTRIES } from "@/lib/data/countries";
 import { PROVIDERS, providersInCountry } from "@/lib/data/providers";
 import { SITE } from "@/lib/site";
-import { WebPageJsonLd, HowToJsonLd, SpeakableJsonLd } from "@/lib/seo/jsonLd";
+import { WebPageJsonLd, HowToJsonLd, SpeakableJsonLd, SoftwareApplicationJsonLd, ItemListJsonLd, FaqJsonLd } from "@/lib/seo/jsonLd";
 import { currentMonthSlug, parseMonthYear, getAllMonthYearSlugs } from "@/lib/seo/months";
 
 export const metadata = buildMetadata({
@@ -192,9 +192,22 @@ export default function HomePage() {
 
   return (
     <>
-      <WebPageJsonLd url="/" name={SITE.name} description={SITE.description} />
+      <WebPageJsonLd url="/" name={SITE.name} description={SITE.description} pageType="WebPage" />
       <HowToJsonLd />
-      <SpeakableJsonLd cssSelectors={["#hero-heading", "#hero-intro"]} />
+      <SpeakableJsonLd cssSelectors={["#hero-heading", "#hero-intro", ".quick-answer"]} />
+      <SoftwareApplicationJsonLd />
+      <ItemListJsonLd
+        name="Utility bill check guides by country"
+        description="30-country directory of electricity, gas, and water utility bill check guides"
+        url="/"
+        items={COUNTRIES.map((c, i) => ({
+          position: i + 1,
+          name: `${c.name} bill check`,
+          url: `/${c.slug}`,
+          description: c.shortIntro,
+        }))}
+      />
+      <FaqJsonLd items={HOME_FAQ} pageUrl="/" />
 
       {/* ────────────── 1. Hero ────────────── */}
       <section aria-labelledby="hero-heading" className="relative bg-gradient-to-b from-brand-50 via-white to-white border-b border-slate-200">

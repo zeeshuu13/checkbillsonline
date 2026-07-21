@@ -15,7 +15,7 @@ import { ComplaintsLadder } from "@/components/ComplaintsLadder";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { CitationsBlock } from "@/components/CitationsBlock";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { WebPageJsonLd, ArticleJsonLd } from "@/lib/seo/jsonLd";
+import { WebPageJsonLd, ArticleJsonLd, FaqJsonLd } from "@/lib/seo/jsonLd";
 import { MonthlyBillPage } from "@/components/MonthlyBillPage";
 import { isMonthYear, getAllMonthYearSlugs, parseMonthYear } from "@/lib/seo/months";
 import { buildMonthlyContent } from "@/lib/content/monthly";
@@ -136,6 +136,9 @@ export default async function SpokePage(props: { params: Promise<Params> }) {
           authorName={spokeContent.author}
           authorUrl="/authors/editorial"
         />
+      )}
+      {spokeContent?.faq && spokeContent.faq.length > 0 && (
+        <FaqJsonLd items={spokeContent.faq} pageUrl={path} />
       )}
 
       <div className="container-wide pt-6">

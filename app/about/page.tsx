@@ -17,7 +17,7 @@ export default function AboutPage() {
   const breadcrumb = [{ name: "Home", href: "/" }, { name: "About", href: "/about" }];
   return (
     <>
-      <WebPageJsonLd url="/about" name="About" description={SITE.description} breadcrumb={breadcrumb} />
+      <WebPageJsonLd url="/about" name="About Check Bills Online" description={SITE.description} breadcrumb={breadcrumb} pageType="AboutPage" />
       <div className="container-wide pt-6"><Breadcrumb items={breadcrumb} /></div>
 
       {/* Page header */}

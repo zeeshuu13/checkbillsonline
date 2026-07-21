@@ -18,7 +18,7 @@ import { CitationsBlock } from "@/components/CitationsBlock";
 import { RemoteImage } from "@/components/RemoteImage";
 import { buildBillCheckKeywords, buildMetadata } from "@/lib/seo/metadata";
 import { getAllMonthYearSlugs, parseMonthYear } from "@/lib/seo/months";
-import { WebPageJsonLd, ArticleJsonLd, ServiceJsonLd } from "@/lib/seo/jsonLd";
+import { WebPageJsonLd, ArticleJsonLd, ServiceJsonLd, FaqJsonLd, DatasetJsonLd } from "@/lib/seo/jsonLd";
 import { MonthlyGuidesBand, RelatedProvidersBand } from "@/components/ProviderBands";
 
 type Params = { country: string; providerBillCheck: string };
@@ -89,6 +89,25 @@ export default async function ProviderHubPage(props: { params: Promise<Params> }
           dateModified={content.hub.lastReviewed}
           authorName={content.hub.author}
           authorUrl="/authors/editorial"
+        />
+      )}
+      {content?.hub.faq && content.hub.faq.length > 0 && (
+        <FaqJsonLd items={content.hub.faq} pageUrl={base} />
+      )}
+      {content?.hub.tariff && (
+        <DatasetJsonLd
+          name={`${provider.name} ${provider.type} tariff rates`}
+          description={`Current ${provider.name} electricity tariff slab rates and fixed charges sourced from ${c.electricityRegulator.shortName ?? c.electricityRegulator.name}`}
+          url={base}
+          creator="Check Bills Online"
+          dateModified={content.hub.lastReviewed}
+          keywords={[
+            `${provider.name} tariff`,
+            `${provider.name} electricity rate`,
+            `${c.name} electricity tariff`,
+            `${c.electricityRegulator.shortName ?? c.electricityRegulator.name} tariff`,
+            "utility bill rate",
+          ]}
         />
       )}
 

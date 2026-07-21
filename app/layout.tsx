@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { OrganizationJsonLd, WebSiteJsonLd } from "@/lib/seo/jsonLd";
+import { OrganizationJsonLd, WebSiteJsonLd, DefinedTermSetJsonLd } from "@/lib/seo/jsonLd";
 import { SITE } from "@/lib/site";
 import { AdBanner } from "@/components/AdBanner";
 import { InvokeAd } from "@/components/InvokeAd";
@@ -130,6 +130,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <OrganizationJsonLd />
         <WebSiteJsonLd />
+        <DefinedTermSetJsonLd
+          name="Utility bill terminology glossary"
+          url="/"
+          terms={[
+            { name: "Reference number", description: "A unique identifier printed at the top of every utility bill, used to look up the bill online. Also called consumer number, account number, CA number, or premise number depending on the utility.", aliases: ["consumer number", "account number", "CA number", "premise number", "customer ID"] },
+            { name: "Tariff slab", description: "A consumption band in a graduated electricity tariff. Each slab has a per-unit rate; usage in each band is billed at that band's rate. Crossing into a higher slab increases the rate only on units in that band (telescopic tariff).", aliases: ["consumption slab", "billing slab", "tariff band", "rate slab"] },
+            { name: "Fixed charge", description: "A flat monthly charge on a utility bill that does not depend on consumption. Also called the meter rent, capacity charge, or standing charge. Payable even if consumption is zero.", aliases: ["standing charge", "meter rent", "capacity charge", "service charge"] },
+            { name: "Fuel Price Adjustment (FPA)", description: "A monthly variable surcharge on electricity bills in Pakistan, passed through from changes in fuel input costs (gas, furnace oil, coal). Positive when input costs rise, negative when they fall. Set monthly by NEPRA.", aliases: ["FPA", "fuel adjustment", "fuel adjustment charge", "FAC"] },
+            { name: "PITC", description: "Power Information Technology Company, a government entity in Pakistan that operates bill.pitc.com.pk — the shared online bill portal for all 13 Pakistan DISCOs (distribution companies).", aliases: ["Power Information Technology Company"] },
+            { name: "DISCO", description: "Distribution Company — one of Pakistan's 13 electricity distribution utilities: MEPCO, LESCO, IESCO, FESCO, GEPCO, PESCO, HESCO, SEPCO, QESCO, TESCO, HAZECO, K-Electric, TESCO.", aliases: ["distribution company", "electricity distribution utility"] },
+            { name: "NEPRA", description: "National Electric Power Regulatory Authority — Pakistan's electricity sector regulator. Sets tariff for all DISCOs and adjudicates consumer complaints. Website: nepra.org.pk.", aliases: ["National Electric Power Regulatory Authority"] },
+            { name: "BBPS", description: "Bharat Bill Payment System — NPCI-operated payment rail used for utility bill payments in India. Enables real-time bill fetch and payment for Adani Electricity, Tata Power, BSES, and hundreds of other Indian utilities.", aliases: ["Bharat Bill Payment System", "NPCI bill payment"] },
+            { name: "Late payment surcharge", description: "A penalty added to a utility bill when payment is received after the due date. In Pakistan this is typically 10% of the bill amount. Failing to pay within the disconnection window adds reconnection fees on top.", aliases: ["LPS", "late fee", "surcharge", "penalty"] },
+            { name: "Cross Subsidy Program (CSS)", description: "A Government of Pakistan program at css.pitc.com.pk that registers domestic electricity consumers using ≤200 units/month for the protected (lifeline) tariff. Registration requires a CNIC and is verified by OTP. Eligible consumers pay a lower per-unit rate.", aliases: ["CSS", "lifeline tariff registration", "protected tariff", "cross subsidy"] },
+            { name: "DEWA", description: "Dubai Electricity and Water Authority — the government utility providing electricity and water in Dubai, UAE. Bill reference is a 10-digit Premise account number. Website: dewa.gov.ae.", aliases: ["Dubai Electricity and Water Authority"] },
+            { name: "Reconnection fee", description: "A charge levied to restore electricity supply after disconnection for non-payment. In addition to the reconnection fee, the full outstanding balance must be settled before supply is restored.", aliases: ["restoration fee", "reconnection charge"] },
+            { name: "Withholding tax (electricity)", description: "In Pakistan, a withholding tax is levied on electricity bills: 7.5% for income tax filers and 15% for non-filers. This amount is adjustable against the consumer's annual income tax liability.", aliases: ["WHT", "WH tax", "FBR withholding", "7.5% electricity tax"] },
+            { name: "Net metering", description: "A billing arrangement for solar panel owners where electricity exported to the grid is credited against consumption. The net consumption (import minus export) is billed at the applicable tariff slab rate.", aliases: ["solar net metering", "export tariff", "grid export credit"] },
+            { name: "MEPCO", description: "Multan Electric Power Company — Pakistan electricity DISCO serving Southern Punjab (Multan, Bahawalpur, Sahiwal division). Bill reference: 14 digits. Check via PITC portal or MEPCO bill check page.", aliases: ["Multan Electric Power Company", "MEPCO bill check"] },
+            { name: "LESCO", description: "Lahore Electric Supply Company — Pakistan electricity DISCO serving Lahore and surrounding areas. Bill reference: 14 digits. Check via PITC portal.", aliases: ["Lahore Electric Supply Company", "LESCO bill check"] },
+          ]}
+        />
         <SiteHeader />
 
         {/* Leaderboard (728x90) desktop / Mobile banner (320x50) */}

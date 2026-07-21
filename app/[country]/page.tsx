@@ -7,7 +7,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { RemoteImage } from "@/components/RemoteImage";
 import { Section } from "@/components/Section";
 import { SectionWithImage } from "@/components/SectionWithImage";
-import { WebPageJsonLd } from "@/lib/seo/jsonLd";
+import { WebPageJsonLd, CollectionPageJsonLd, ItemListJsonLd } from "@/lib/seo/jsonLd";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 type Params = { country: string };
@@ -49,14 +49,37 @@ export default async function CountryHubPage(props: { params: Promise<Params> })
     { name: c.name, href: `/${c.slug}` },
   ];
 
+  const allProviders = [...electricity, ...gas, ...water];
+
   return (
     <>
       <WebPageJsonLd
         url={`/${c.slug}`}
-        name={`${c.name} bill check`}
+        name={`${c.name} bill check — electricity, gas & water`}
         description={c.shortIntro}
         breadcrumb={breadcrumb}
+        pageType="CollectionPage"
       />
+      <CollectionPageJsonLd
+        url={`/${c.slug}`}
+        name={`${c.name} utility bill check guides`}
+        description={`Electricity, gas, and water bill check guides for ${c.name}. Covers ${allProviders.length} provider${allProviders.length === 1 ? "" : "s"}. Tariff tables sourced from ${c.electricityRegulator.shortName ?? c.electricityRegulator.name}.`}
+        breadcrumb={breadcrumb}
+        dateModified="2025-07-01"
+      />
+      {allProviders.length > 0 && (
+        <ItemListJsonLd
+          name={`${c.name} utility providers`}
+          description={`All electricity, gas, and water providers covered for ${c.name}`}
+          url={`/${c.slug}`}
+          items={allProviders.map((p, i) => ({
+            position: i + 1,
+            name: `${p.name} bill check`,
+            url: `/${c.slug}/${p.routeSlug}`,
+            description: `${p.name} ${p.type} bill check — ${p.serviceAreas.slice(0, 2).join(", ")}`,
+          }))}
+        />
+      )}
       <div className="container-wide pt-6">
         <Breadcrumb items={breadcrumb} />
       </div>

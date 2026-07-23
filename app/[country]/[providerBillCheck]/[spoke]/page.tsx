@@ -20,6 +20,7 @@ import { MonthlyBillPage } from "@/components/MonthlyBillPage";
 import { isMonthYear, getAllMonthYearSlugs, parseMonthYear } from "@/lib/seo/months";
 import { buildMonthlyContent } from "@/lib/content/monthly";
 import { MonthlyGuidesBand, RelatedProvidersBand } from "@/components/ProviderBands";
+import { ProviderDisclaimer } from "@/components/ProviderDisclaimer";
 
 const SPOKES = ["tariff", "payment-methods", "complaints", "new-connection", "faq"] as const;
 type SpokeKey = (typeof SPOKES)[number];
@@ -144,6 +145,12 @@ export default async function SpokePage(props: { params: Promise<Params> }) {
       <div className="container-wide pt-6">
         <Breadcrumb items={breadcrumb} />
       </div>
+
+      <ProviderDisclaimer
+        providerName={provider.name}
+        legalName={provider.legalName}
+        portalUrl={provider.portalUrl}
+      />
 
       <HeroBillCheck country={c} provider={provider} />
       <CrossClusterBand provider={provider} current={spoke} />

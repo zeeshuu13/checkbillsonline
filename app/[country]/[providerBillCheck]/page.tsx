@@ -20,6 +20,7 @@ import { buildBillCheckKeywords, buildMetadata } from "@/lib/seo/metadata";
 import { getAllMonthYearSlugs, parseMonthYear } from "@/lib/seo/months";
 import { WebPageJsonLd, ArticleJsonLd, ServiceJsonLd, FaqJsonLd, DatasetJsonLd } from "@/lib/seo/jsonLd";
 import { MonthlyGuidesBand, RelatedProvidersBand } from "@/components/ProviderBands";
+import { ProviderDisclaimer } from "@/components/ProviderDisclaimer";
 
 type Params = { country: string; providerBillCheck: string };
 
@@ -114,6 +115,12 @@ export default async function ProviderHubPage(props: { params: Promise<Params> }
       <div className="container-wide pt-6">
         <Breadcrumb items={breadcrumb} />
       </div>
+
+      <ProviderDisclaimer
+        providerName={provider.name}
+        legalName={provider.legalName}
+        portalUrl={provider.portalUrl}
+      />
 
       <HeroBillCheck country={c} provider={provider} />
       <CrossClusterBand provider={provider} current="" />

@@ -7,6 +7,7 @@ import { parseMonthYear, getAllMonthYearSlugs } from "@/lib/seo/months";
 import { buildMonthlyContent } from "@/lib/content/monthly";
 import { WebPageJsonLd, FaqJsonLd, BreadcrumbJsonLd } from "@/lib/seo/jsonLd";
 import { RelatedProvidersBand } from "@/components/ProviderBands";
+import { ProviderDisclaimer } from "@/components/ProviderDisclaimer";
 
 type Props = {
   provider: Provider;
@@ -54,6 +55,12 @@ export function MonthlyBillPage({ provider, country, monthSlug }: Props) {
       <div className="container-wide pt-6">
         <Breadcrumb items={breadcrumb} />
       </div>
+
+      <ProviderDisclaimer
+        providerName={provider.name}
+        legalName={provider.legalName}
+        portalUrl={provider.portalUrl}
+      />
 
       <HeroBillCheck country={country} provider={provider} />
 

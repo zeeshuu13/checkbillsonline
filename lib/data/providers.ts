@@ -459,28 +459,6 @@ export const PROVIDERS: Provider[] = [
     billCheckTier: "C-linkout",
     imageQuery: "electric grid transformer",
   },
-  {
-    slug: "duke-energy",
-    countrySlug: "usa",
-    type: "electricity",
-    name: "Duke Energy",
-    legalName: "Duke Energy Corporation",
-    routeSlug: "duke-energy-bill-check",
-    portalUrl: "https://www.duke-energy.com/my-account/sign-in",
-    referenceFormat: {
-      label: "Account Number",
-      regex: "^[0-9]{10,11}$",
-      example: "0123456789",
-      description: "10 to 11 digit account number on Duke Energy bills.",
-      digitsOnly: true, minLength: 10, maxLength: 11,
-    },
-    supportPhone: "1-800-777-9898",
-    serviceAreas: ["North Carolina", "South Carolina", "Florida", "Indiana", "Ohio", "Kentucky"],
-    established: 1900, customers: 8.2, hq: "Charlotte, NC",
-    billCheckTier: "C-linkout",
-    imageQuery: "electric power lines sunset",
-  },
-
   // -- Other countries - flagship utility seeded for routing (expand per brief) --
   {
     slug: "desco", countrySlug: "bangladesh", type: "electricity",
